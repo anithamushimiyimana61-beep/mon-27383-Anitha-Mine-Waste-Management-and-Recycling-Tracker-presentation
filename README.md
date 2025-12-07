@@ -340,4 +340,17 @@ Execute scripts in this order using SQL*Plus (SYSDBA):
 ## Conclusion
 Phase IV successfully established a complete Oracle database environment ready for application data storage, security, and performance tuning.
 
+## Phase V – Table Implementation & Data Insertion
+
+### Objective
+Build physical database structure with realistic test data, enforce constraints, and verify data integrity.
+
+### Contents
+- **Scripts**:
+  - `04_create_tables.sql` – Table creation with PKs, FKs, and constraints
+  - `05_insert_data.sql` – Data insertion (50+ rows per table)
+  - `06_validation_queries.sql` – Verification queries and tests
+- **Screenshots**:
+- table creation, data insertion, validation
+  
 
