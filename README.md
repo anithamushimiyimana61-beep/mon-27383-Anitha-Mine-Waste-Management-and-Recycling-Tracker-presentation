@@ -264,4 +264,72 @@ The logical database design supports BI implementation through:
 - Time-based analysis support
 - Scalable aggregation structures
 - Compatibility with Oracle analytics and dashboard tools
+---
+  # PHASE IV – Database Creation and Configuration
+
+
+## Objective
+To create and configure an Oracle database environment suitable for managing mine waste data, including users, tablespaces, and storage configurations.
+
+---
+
+## Important Note on Oracle Version
+This project was implemented using **Oracle Database 10g Express Edition**, which does **not support Pluggable Databases (PDBs)**.
+
+Therefore, Phase IV requirements were implemented using:
+- Dedicated database schema
+- Custom tablespaces
+- Administrative user privileges
+
+This approach provides equivalent isolation and configuration controls.
+
+---
+
+## Database Configuration
+
+### Tablespaces Created
+| Tablespace Name | Purpose |
+|-----------------|---------|
+| minewaste_data  | Data storage |
+| minewaste_index | Index storage |
+| minewaste_temp  | Temporary operations |
+
+All tablespaces use:
+- AUTOEXTEND enabled
+- Locally managed extents
+- Automatic segment space management
+
+---
+
+### Admin User
+- Username: `mon_27383_Anitha_minewaste`
+- Password: `Anitha`
+- Role: Super admin (project-level)
+- Quotas: Unlimited on project tablespaces
+
+---
+
+## Memory & Logging
+- Memory managed automatically by Oracle 10g XE
+- ARCHIVELOG mode enabled by default configuration for recovery support
+
+---
+
+## Screenshots
+
+
+---
+
+## How to Run Scripts
+Execute scripts in this order using SQL*Plus (SYSDBA):
+
+1. `01_tablespaces.sql`
+2. `02_user_creation.sql`
+3. `03_verification.sql`
+
+---
+
+## Conclusion
+Phase IV successfully established a complete Oracle database environment ready for application data storage, security, and performance tuning.
+
 
