@@ -1,0 +1,255 @@
+-- SECTION 1: TRIGGERS FOR MINE_WASTE TABLE
+-- ============================================================================
+
+-- Trigger 1: BEFORE INSERT on MINE_WASTE
+CREATE OR REPLACE TRIGGER trg_mine_waste_before_insert
+BEFORE INSERT ON MINE_WASTE
+FOR EACH ROW
+DECLARE
+    v_restriction_status VARCHAR2(200);
+    v_audit_id NUMBER;
+BEGIN
+    -- Check restrictions
+    v_restriction_status := fn_check_restrictions('INSERT');
+    
+    -- Log the attempt
+    v_audit_id := fn_log_audit(
+        USER,
+        'INSERT ATTEMPT',
+        'INSERT',
+        'MINE_WASTE',
+        v_restriction_status
+    );
+    
+    -- If denied, raise error
+    IF v_restriction_status LIKE 'DENIED%' THEN
+        RAISE_APPLICATION_ERROR(-20100, v_restriction_status || ' [Audit ID: ' || v_audit_id || ']');
+    END IF;
+    
+    -- Set default values if needed
+    IF :NEW.DATE_RECORDED IS NULL THEN
+        :NEW.DATE_RECORDED := SYSDATE;
+    END IF;
+    
+    IF :NEW.IS_RECYCLABLE IS NULL THEN
+        :NEW.IS_RECYCLABLE := 'NO';
+    END IF;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
+END;
+/
+
+-- Trigger 2: BEFORE UPDATE on MINE_WASTE
+CREATE OR REPLACE TRIGGER trg_mine_waste_before_update
+BEFORE UPDATE ON MINE_WASTE
+FOR EACH ROW
+DECLARE
+    v_restriction_status VARCHAR2(200);
+    v_audit_id NUMBER;
+BEGIN
+    v_restriction_status := fn_check_restrictions('UPDATE');
+    
+    v_audit_id := fn_log_audit(
+        USER,
+        'UPDATE ATTEMPT',
+        'UPDATE',
+        'MINE_WASTE',
+        v_restriction_status
+    );
+    
+    IF v_restriction_status LIKE 'DENIED%' THEN
+        RAISE_APPLICATION_ERROR(-20101, v_restriction_status || ' [Audit ID: ' || v_audit_id || ']');
+    END IF;
+    
+    -- Prevent changing waste_id
+    IF :OLD.WASTE_ID != :NEW.WASTE_ID THEN
+        RAISE_APPLICATION_ERROR(-20102, 'Cannot change WASTE_ID');
+    END IF;
+    
+END;
+/
+
+-- Trigger 3: BEFORE DELETE on MINE_WASTE
+CREATE OR REPLACE TRIGGER trg_mine_waste_before_delete
+BEFORE DELETE ON MINE_WASTE
+FOR EACH ROW
+DECLARE
+    v_restriction_status VARCHAR2(200);
+    v_audit_id NUMBER;
+    v_has_dependencies NUMBER;
+BEGIN
+    v_restriction_status := fn_check_restrictions('DELETE');
+    
+    v_audit_id := fn_log_audit(
+        USER,
+        'DELETE ATTEMPT',
+        'DELETE',
+        'MINE_WASTE',
+        v_restriction_status
+    );
+    
+    IF v_restriction_status LIKE 'DENIED%' THEN
+        RAISE_APPLICATION_ERROR(-20103, v_restriction_status || ' [Audit ID: ' || v_audit_id || ']');
+    END IF;
+    
+    -- Check for dependencies
+    SELECT COUNT(*) INTO v_has_dependencies
+    FROM RECYCLING WHERE WASTE_ID = :OLD.WASTE_ID;
+    
+    IF v_has_dependencies > 0 THEN
+        RAISE_APPLICATION_ERROR(-20104, 'Cannot delete: waste has recycling records');
+    END IF;
+    
+END;
+/
+
+-- ============================================================================
+-- SECTION 2: COMPOUND TRIGGER FOR RECYCLING TABLE
+-- ============================================================================
+
+CREATE OR REPLACE TRIGGER trg_recycling_compound
+FOR INSERT OR UPDATE OR DELETE ON RECYCLING
+COMPOUND TRIGGER
+
+    -- Type definitions
+    TYPE t_recycling_data IS RECORD (
+        recycling_id NUMBER,
+        waste_id NUMBER,
+        operation VARCHAR2(10)
+    );
+    
+    TYPE t_recycling_table IS TABLE OF t_recycling_data;
+    
+    -- Collection to store data
+    v_recycling_records t_recycling_table := t_recycling_table();
+    
+    -- BEFORE STATEMENT section
+    BEFORE STATEMENT IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('=== Compound Trigger: BEFORE STATEMENT ===');
+        v_recycling_records.DELETE;
+    END BEFORE STATEMENT;
+    
+    -- BEFORE EACH ROW section
+    BEFORE EACH ROW IS
+        v_restriction_status VARCHAR2(200);
+        v_audit_id NUMBER;
+        v_operation VARCHAR2(10);
+    BEGIN
+        -- Determine operation
+        IF INSERTING THEN
+            v_operation := 'INSERT';
+        ELSIF UPDATING THEN
+            v_operation := 'UPDATE';
+        ELSIF DELETING THEN
+            v_operation := 'DELETE';
+        END IF;
+        
+        -- Check restrictions
+        v_restriction_status := fn_check_restrictions(v_operation);
+        
+        -- Log the attempt
+        v_audit_id := fn_log_audit(
+            USER,
+            v_operation || ' ATTEMPT',
+            v_operation,
+            'RECYCLING',
+            v_restriction_status
+        );
+        
+        -- If denied, raise error
+        IF v_restriction_status LIKE 'DENIED%' THEN
+            RAISE_APPLICATION_ERROR(-20200, v_restriction_status || ' [Audit ID: ' || v_audit_id || ']');
+        END IF;
+        
+        -- Additional business rules
+        IF INSERTING OR UPDATING THEN
+            DECLARE
+                v_waste_qty NUMBER;
+            BEGIN
+                SELECT QUANTITY INTO v_waste_qty 
+                FROM MINE_WASTE 
+                WHERE WASTE_ID = :NEW.WASTE_ID;
+                
+                IF :NEW.RECYCLED_QUANTITY > v_waste_qty THEN
+                    RAISE_APPLICATION_ERROR(-20201, 'Recycled quantity exceeds available waste');
+                END IF;
+            END;
+        END IF;
+        
+    END BEFORE EACH ROW;
+    
+    -- AFTER EACH ROW section
+    AFTER EACH ROW IS
+        v_rec t_recycling_data;
+    BEGIN
+        IF INSERTING THEN
+            v_rec.recycling_id := :NEW.RECYCLING_ID;
+            v_rec.waste_id := :NEW.WASTE_ID;
+            v_rec.operation := 'INSERT';
+        ELSIF UPDATING THEN
+            v_rec.recycling_id := :NEW.RECYCLING_ID;
+            v_rec.waste_id := :NEW.WASTE_ID;
+            v_rec.operation := 'UPDATE';
+        ELSIF DELETING THEN
+            v_rec.recycling_id := :OLD.RECYCLING_ID;
+            v_rec.waste_id := :OLD.WASTE_ID;
+            v_rec.operation := 'DELETE';
+        END IF;
+        
+        v_recycling_records.EXTEND;
+        v_recycling_records(v_recycling_records.COUNT) := v_rec;
+    END AFTER EACH ROW;
+    
+    -- AFTER STATEMENT section
+    AFTER STATEMENT IS
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('=== Compound Trigger: AFTER STATEMENT ===');
+        DBMS_OUTPUT.PUT_LINE('Total operations: ' || v_recycling_records.COUNT);
+        
+        FOR i IN 1..v_recycling_records.COUNT LOOP
+            DBMS_OUTPUT.PUT_LINE('Operation ' || i || ': ' || 
+                               v_recycling_records(i).operation || 
+                               ' on Recycling ID: ' || 
+                               v_recycling_records(i).recycling_id);
+        END LOOP;
+    END AFTER STATEMENT;
+    
+END trg_recycling_compound;
+/
+
+-- ============================================================================
+-- SECTION 3: TRIGGER FOR WASTE_DISPOSAL TABLE
+-- ============================================================================
+
+CREATE OR REPLACE TRIGGER trg_disposal_restrictions
+BEFORE INSERT OR UPDATE OR DELETE ON WASTE_DISPOSAL
+FOR EACH ROW
+DECLARE
+    v_restriction_status VARCHAR2(200);
+    v_audit_id NUMBER;
+    v_operation VARCHAR2(10);
+BEGIN
+    IF INSERTING THEN v_operation := 'INSERT';
+    ELSIF UPDATING THEN v_operation := 'UPDATE';
+    ELSIF DELETING THEN v_operation := 'DELETE';
+    END IF;
+    
+    v_restriction_status := fn_check_restrictions(v_operation);
+    
+    v_audit_id := fn_log_audit(
+        USER,
+        v_operation || ' ATTEMPT',
+        v_operation,
+        'WASTE_DISPOSAL',
+        v_restriction_status
+    );
+    
+    IF v_restriction_status LIKE 'DENIED%' THEN
+        RAISE_APPLICATION_ERROR(-20300, v_restriction_status);
+    END IF;
+END;
+/
+
