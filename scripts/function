@@ -1,0 +1,146 @@
+CREATE OR REPLACE VIEW v_site_waste_ranking AS
+SELECT 
+    ms.SITE_NAME,
+    SUM(mw.QUANTITY) AS total_waste,
+    RANK() OVER (ORDER BY SUM(mw.QUANTITY) DESC) AS waste_rank,
+    DENSE_RANK() OVER (ORDER BY SUM(mw.QUANTITY) DESC) AS dense_rank,
+    ROW_NUMBER() OVER (ORDER BY SUM(mw.QUANTITY) DESC) AS row_num
+FROM MINE_WASTE mw
+JOIN MINE_SITE ms ON mw.SITE_ID = ms.SITE_ID
+GROUP BY ms.SITE_NAME;
+
+-- Query 2: Moving average of waste generated
+CREATE OR REPLACE VIEW v_waste_moving_avg AS
+SELECT 
+    WASTE_TYPE,
+    DATE_RECORDED,
+    QUANTITY,
+    AVG(QUANTITY) OVER (
+        PARTITION BY WASTE_TYPE 
+        ORDER BY DATE_RECORDED 
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_3day
+FROM MINE_WASTE;
+
+-- Query 3: LAG and LEAD for trend analysis
+CREATE OR REPLACE VIEW v_waste_trends AS
+SELECT 
+    WASTE_ID,
+    WASTE_TYPE,
+    QUANTITY,
+    DATE_RECORDED,
+    LAG(QUANTITY, 1) OVER (PARTITION BY WASTE_TYPE ORDER BY DATE_RECORDED) AS prev_quantity,
+    LEAD(QUANTITY, 1) OVER (PARTITION BY WASTE_TYPE ORDER BY DATE_RECORDED) AS next_quantity,
+    QUANTITY - LAG(QUANTITY, 1) OVER (PARTITION BY WASTE_TYPE ORDER BY DATE_RECORDED) AS quantity_change
+FROM MINE_WASTE;
+
+-- ============================================================================
+-- PACKAGE: Waste Management Package
+-- ============================================================================
+
+CREATE OR REPLACE PACKAGE pkg_waste_management AS
+    -- Public procedures
+    PROCEDURE add_waste(
+        p_site_id IN NUMBER,
+        p_waste_type IN VARCHAR2,
+        p_quantity IN NUMBER,
+        p_is_recyclable IN VARCHAR2 DEFAULT 'NO'
+    );
+    
+    PROCEDURE generate_waste_report(
+        p_start_date IN DATE,
+        p_end_date IN DATE
+    );
+    
+    -- Public functions
+    FUNCTION get_site_total_waste(p_site_id IN NUMBER) RETURN NUMBER;
+    FUNCTION get_recyclable_percentage RETURN NUMBER;
+    
+END pkg_waste_management;
+/
+
+CREATE OR REPLACE PACKAGE BODY pkg_waste_management AS
+    
+    PROCEDURE add_waste(
+        p_site_id IN NUMBER,
+        p_waste_type IN VARCHAR2,
+        p_quantity IN NUMBER,
+        p_is_recyclable IN VARCHAR2 DEFAULT 'NO'
+    ) IS
+        v_waste_id NUMBER;
+    BEGIN
+        sp_add_waste(p_site_id, p_waste_type, p_quantity, p_is_recyclable, v_waste_id);
+        DBMS_OUTPUT.PUT_LINE('Waste added with ID: ' || v_waste_id);
+    END add_waste;
+    
+    PROCEDURE generate_waste_report(
+        p_start_date IN DATE,
+        p_end_date IN DATE
+    ) IS
+        CURSOR c_report IS
+            SELECT WASTE_TYPE, COUNT(*) AS cnt, SUM(QUANTITY) AS total_qty
+            FROM MINE_WASTE
+            WHERE DATE_RECORDED BETWEEN p_start_date AND p_end_date
+            GROUP BY WASTE_TYPE;
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('=== Waste Report ===');
+        DBMS_OUTPUT.PUT_LINE('Period: ' || TO_CHAR(p_start_date, 'DD-MON-YYYY') || 
+                           ' to ' || TO_CHAR(p_end_date, 'DD-MON-YYYY'));
+        DBMS_OUTPUT.PUT_LINE('');
+        
+        FOR rec IN c_report LOOP
+            DBMS_OUTPUT.PUT_LINE(rec.WASTE_TYPE || ': ' || 
+                               rec.cnt || ' records, ' || 
+                               rec.total_qty || ' tons');
+        END LOOP;
+    END generate_waste_report;
+    
+    FUNCTION get_site_total_waste(p_site_id IN NUMBER) RETURN NUMBER IS
+    BEGIN
+        RETURN fn_total_waste_by_site(p_site_id);
+    END get_site_total_waste;
+    
+    FUNCTION get_recyclable_percentage RETURN NUMBER IS
+        v_total NUMBER;
+        v_recyclable NUMBER;
+    BEGIN
+        SELECT SUM(QUANTITY) INTO v_total FROM MINE_WASTE;
+        SELECT SUM(QUANTITY) INTO v_recyclable FROM MINE_WASTE WHERE IS_RECYCLABLE = 'YES';
+        
+        IF v_total = 0 THEN
+            RETURN 0;
+        END IF;
+        
+        RETURN ROUND((v_recyclable / v_total) * 100, 2);
+    END get_recyclable_percentage;
+    
+END pkg_waste_management;
+/
+
+-- ============================================================================
+-- TESTING SCRIPTS
+-- ============================================================================
+
+SET SERVEROUTPUT ON;
+
+-- Test procedures
+DECLARE
+    v_waste_id NUMBER;
+    v_recycling_id NUMBER;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('=== Testing Procedures ===');
+    DBMS_OUTPUT.PUT_LINE('');
+    
+    -- Test add waste
+    sp_add_waste(1001, 'Test Waste', 500, 'YES', v_waste_id);
+    
+    -- Test recycling
+    sp_record_recycling(v_waste_id, 201, 250, v_recycling_id);
+    
+    -- Test functions
+    DBMS_OUTPUT.PUT_LINE('Total waste at site 1001: ' || fn_total_waste_by_site(1001));
+    DBMS_OUTPUT.PUT_LINE('Recycling rate: ' || fn_recycling_rate(1001) || '%');
+    
+    -- Test package
+    DBMS_OUTPUT.PUT_LINE('Recyclable percentage: ' || pkg_waste_management.get_recyclable_percentage() || '%');
+END;
