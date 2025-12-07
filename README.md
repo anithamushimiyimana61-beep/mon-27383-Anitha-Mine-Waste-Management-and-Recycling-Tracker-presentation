@@ -1,3 +1,31 @@
+<img width="355" height="86" alt="AUCA" src="https://github.com/user-attachments/assets/2492d9ad-6932-4d9f-9406-d1ce83849f75" />
+
+# Stone Mine Waste Management and Recycling Tracker System
+
+**Student Name:** Anitha Mushimiyimana  
+**Student ID:** 27383  
+**Course:** Database Development with PL/SQL (INSY 8311)  
+**Academic Year:** 2025-2026 | Semester: I  
+**Lecturer:** Eric Maniraguha | eric.maniraguha@auca.ac.rw  
+**Institution:** Adventist University of Central Africa (AUCA)  
+**Project Completion Date:** December 7, 2025  
+
+---
+## Project Overview
+The **Stone Mine Waste Management and Recycling Tracker System** is a comprehensive Oracle database solution for monitoring, managing, and analyzing waste produced during stone mining operations. It ensures proper recycling, disposal, regulatory compliance, and enables BI-driven decision-making.
+
+**Problem Statement:**  
+Mining operations generate significant waste, but many mines lack a system to track waste generation, recycling efficiency, and environmental compliance. This system automates waste management, enforces business rules, and provides actionable insights through BI.
+
+**Key Objectives:**  
+- Record and manage mine waste effectively  
+- Differentiate between recyclable and non-recyclable waste  
+- Implement audit logging and enforcement of business rules  
+- Enable BI analytics for management reporting  
+- Support environmental compliance  
+
+---
+
 #PHASE II
 # BPMN
 ![alt text](<Screenshot 2025-12-01 141521-1.png>)
@@ -359,5 +387,93 @@ Build physical database structure with realistic test data, enforce constraints,
 <img width="482" height="371" alt="p v insert 1" src="https://github.com/user-attachments/assets/103f148d-8736-4c44-aad5-29bbc3ff1325" />
 
 
-  
+  ## Phase VI – Database Interaction & Transactions
+
+**Procedures:**  
+- `insert_waste` – Insert new waste record  
+- `update_recycling` – Update recycled quantity  
+- `dispose_waste` – Record waste disposal  
+
+**Functions:**  
+- `is_recyclable` – Returns recyclable status  
+- `total_waste_per_site` – Total waste per site  
+- `get_user_role` – Determine user role  
+
+**Packages:**  
+- `waste_pkg` – Groups related waste operations  
+
+**Features:**  
+- Parameterized IN/OUT/IN OUT  
+- Exception handling with rollback  
+- Audit logging for all operations
+ ---
+<img width="238" height="366" alt="p vi1" src="https://github.com/user-attachments/assets/19e98077-7669-4794-b271-901b0d04741a" />
+
+---
+## Phase VII – Advanced Programming & Auditing
+**Business Rule:**  
+Employees **cannot insert/update/delete** on weekdays (Mon-Fri) or public holidays.  
+
+**Implementation:**  
+1. `HOLIDAYS` table – Stores public holidays  
+2. `fn_check_restrictions` – Checks action restrictions  
+3. Compound trigger `trg_waste_restriction` – Enforces rules and logs attempts  
+
+**Testing:**  
+- Weekday/holiday actions blocked (DENIED)  
+- Weekend actions allowed (ALLOWED)  
+- Audit logs capture all attempts  
+
+---
+
+## Business Intelligence (BI) Considerations
+- **Fact Table:** `WASTE`  
+- **Dimension Tables:** `MINE_SITE`, `MINE_SITE_MANAGER`, `  RECYCLING `, `MINE_WASTE `, `RECYCLING_SUPERVISOR`, `ENVIRONMENTAL_OFFICER`  
+- **KPIs:**  
+  - Total waste per site  
+  - Recyclable vs non-recyclable ratio  
+  - Recycling rate over time  
+  - Disposal methods distribution  
+  - Average processing time  
+
+**Reports:**  
+- Daily, monthly, yearly summaries  
+- Site-level and organization-level dashboards  
+- Compliance monitoring  
+
+---
+
+## How to Run
+1. Create tablespaces and admin user  
+2. Create tables and insert data  
+3. Run PL/SQL scripts (procedures, functions, packages)  
+4. Populate `HOLIDAYS` table  
+5. Test triggers for weekday/holiday restrictions  
+6. Run BI queries for reports  
+
+---
+### Screenshots
+<img width="295" height="143" alt="p vii A" src="https://github.com/user-attachments/assets/9a6addc9-ecb4-4892-8bba-7a4e02b2a576" />
+
+<img width="491" height="131" alt="PVII TR" src="https://github.com/user-attachments/assets/00a3759d-2069-4e76-80dd-8c3fd5decf74" />
+
+<img width="658" height="353" alt="pvii2" src="https://github.com/user-attachments/assets/3a880748-d522-472f-84b3-ad6a2a92840e" />
+
+<img width="295" height="143" alt="p vii A" src="https://github.com/user-attachments/assets/f59ca5da-e053-4a8d-9dad-f5406aab52a4" />
+
+---
+
+## Conclusion
+
+Phase VI and VII of the PL/SQL Oracle Database Capstone Project successfully implemented a full suite of **procedures, functions, cursors, packages, and advanced database objects** for managing mine waste and recycling operations. Key outcomes include:
+
+- **Data Integrity & Validation:** All procedures and functions include robust validations and exception handling to ensure reliable operations.  
+- **Automation & Efficiency:** Cursors and packages support bulk processing, summary reports, and modular business logic execution.  
+- **Advanced Analytics:** Window functions and views provide insights such as site rankings, waste trends, and moving averages.  
+- **Error Handling & Auditing:** Custom exceptions, rollback mechanisms, and logging ensure traceability and system reliability.  
+- **Testing & Verification:** All objects were tested with realistic scenarios, and outputs were validated using DBMS_OUTPUT, queries, and views.  
+
+These phases demonstrate the ability to **develop a production-ready PL/SQL system** that supports operational efficiency and decision-making. The project is now prepared for **Phase VIII: Business Intelligence dashboards and final documentation**, completing the end-to-end solution.
+
+
 
