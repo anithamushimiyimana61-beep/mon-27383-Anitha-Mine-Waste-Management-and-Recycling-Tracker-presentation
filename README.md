@@ -351,6 +351,13 @@ Build physical database structure with realistic test data, enforce constraints,
   - `05_insert_data.sql` – Data insertion (50+ rows per table)
   - `06_validation_queries.sql` – Verification queries and tests
 - **Screenshots**:
-- table creation, data insertion, validation
+ ### tables 
+ <img width="347" height="375" alt="P V TAB" src="https://github.com/user-attachments/assets/c8a4e5c9-1985-4360-9cc1-c950087331fc" />
+### validation
+<img width="347" height="375" alt="P V TAB" src="https://github.com/user-attachments/assets/8229f109-babe-46ad-97ba-9dc8c4a95973" />
+### insert
+<img width="482" height="371" alt="p v insert 1" src="https://github.com/user-attachments/assets/103f148d-8736-4c44-aad5-29bbc3ff1325" />
+
+
   
 
