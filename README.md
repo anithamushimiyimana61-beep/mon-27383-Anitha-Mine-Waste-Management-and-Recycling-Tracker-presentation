@@ -1,6 +1,6 @@
 <img width="355" height="86" alt="AUCA" src="https://github.com/user-attachments/assets/2492d9ad-6932-4d9f-9406-d1ce83849f75" />
 
-# Stone Mine Waste Management and Recycling Tracker System
+#  Mine Waste Management and Recycling Tracker System
 
 **Student Name:** Anitha Mushimiyimana  
 **Student ID:** 27383  
@@ -12,7 +12,7 @@
 
 ---
 ## Project Overview
-The **Stone Mine Waste Management and Recycling Tracker System** is a comprehensive Oracle database solution for monitoring, managing, and analyzing waste produced during stone mining operations. It ensures proper recycling, disposal, regulatory compliance, and enables BI-driven decision-making.
+The **Mine Waste Management and Recycling Tracker System** is a comprehensive Oracle database solution for monitoring, managing, and analyzing waste produced during stone mining operations. It ensures proper recycling, disposal, regulatory compliance, and enables BI-driven decision-making.
 
 **Problem Statement:**  
 Mining operations generate significant waste, but many mines lack a system to track waste generation, recycling efficiency, and environmental compliance. This system automates waste management, enforces business rules, and provides actionable insights through BI.
@@ -26,13 +26,13 @@ Mining operations generate significant waste, but many mines lack a system to tr
 
 ---
 
-#PHASE II
-# BPMN
+## PHASE II
+###Diagram BPMN
 ![alt text](<Screenshot 2025-12-01 141521-1.png>)
-# Stone Mine Waste Management and Recycling Tracker System
+### Stone Mine Waste Management and Recycling Tracker System
 
 ## Overview
-The Stone Mine Waste Management and Recycling Tracker System models the process of recording and managing waste generated during stone mining operations. 
+The  Mine Waste Management and Recycling Tracker System models the process of recording and managing waste generated during stone mining operations. 
 
 ## Process Flow
 
@@ -73,14 +73,15 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 - Provides accurate data collection and analytics
 
 - -----------------
-# ER DIAGRAM SCREENSHOT
+## PHASE III
+### ER DIAGRAM SCREENSHOT
 ![alt text](<Screenshot 2025-12-01 135611.png>)
-#  Data Dictionary
-## Mine Waste Management and Recycling Tracker System
+### Data Dictionary
+
 
 ---
 
-## Table: MINE_SITE_MANAGER
+### Table: MINE_SITE_MANAGER
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -91,7 +92,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: MINE_SITE
+### Table: MINE_SITE
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -103,7 +104,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: WASTE
+### Table: WASTE
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -117,7 +118,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: RECYCLING_SUPERVISOR
+### Table: RECYCLING_SUPERVISOR
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -128,7 +129,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: RECYCLING
+### Table: RECYCLING
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -141,7 +142,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: ENVIRONMENTAL_OFFICER
+### Table: ENVIRONMENTAL_OFFICER
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -153,7 +154,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: WASTE_DISPOSAL
+### Table: WASTE_DISPOSAL
 
 | Column Name | Data Type | Constraints | Description |
 |------------|----------|------------|-------------|
@@ -166,7 +167,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 
 ---
 
-## Table: AUDIT_LOG
+### Table: AUDIT_LOG
 > Logical relationship only (no foreign key constraints)
 
 | Column Name | Data Type | Constraints | Description |
@@ -181,7 +182,7 @@ The Stone Mine Waste Management and Recycling Tracker System models the process 
 | ERROR_MESSAGE | VARCHAR2(255) | NULL | Error information |
 
 
-## Normalization
+### Normalization
 
 The database design follows Third Normal Form (3NF):
 
@@ -209,27 +210,27 @@ This ensures minimal redundancy and data integrity.
 6. Audit logs maintain historical data and do not enforce foreign key constraints.
 7. Users are identified by role and ID during auditing.
 
-# Business Intelligence (BI) Considerations
-## Mine Waste Management and Recycling Tracker System
+## Business Intelligence (BI) Considerations
+
 
 ---
 
-## 1. BI Objective
+### 1. BI Objective
 The Business Intelligence component of the Mine Waste Management and Recycling Tracker
 aims to support management decision-making by providing analytical insights on waste
 generation, recycling efficiency, environmental compliance, and user activity.
 
 ---
 
-## 2. Fact and Dimension Tables
+### 2. Fact and Dimension Tables
 
-### Fact Table
+#### Fact Table
 - **WASTE**
   - Stores measurable quantities of waste.
   - Contains time-based and site-based metrics.
   - Supports aggregation and trend analysis.
 
-### Dimension Tables
+#### Dimension Tables
 - **MINE_SITE**
   - Enables analysis by mining location.
 - **WASTE_TYPE** (derived from WASTE)
@@ -243,7 +244,7 @@ generation, recycling efficiency, environmental compliance, and user activity.
 
 ---
 
-## 3. Key Performance Indicators (KPIs)
+### 3. Key Performance Indicators (KPIs)
 
 - Total waste generated per mine site
 - Percentage of recyclable vs non-recyclable waste
@@ -255,7 +256,7 @@ generation, recycling efficiency, environmental compliance, and user activity.
 
 ---
 
-## 4. Analytics Opportunities
+### 4. Analytics Opportunities
 
 - Trend analysis of waste generation over time
 - Comparison of recycling performance between mine sites
@@ -265,7 +266,7 @@ generation, recycling efficiency, environmental compliance, and user activity.
 
 ---
 
-## 5. Aggregation & Reporting Levels
+### 5. Aggregation & Reporting Levels
 
 - Daily, monthly, and yearly waste summaries
 - Site-level and organization-level reports
@@ -274,7 +275,7 @@ generation, recycling efficiency, environmental compliance, and user activity.
 
 ---
 
-## 6. Audit & Compliance Analytics
+### 6. Audit & Compliance Analytics
 
 The AUDIT_LOG table enables:
 - Monitoring of forbidden operations
@@ -286,22 +287,22 @@ Logical relationships are used to preserve historical audit data.
 
 ---
 
-## 7. BI Readiness
+### 7. BI Readiness
 The logical database design supports BI implementation through:
 - Clear separation of fact and dimension data
 - Time-based analysis support
 - Scalable aggregation structures
 - Compatibility with Oracle analytics and dashboard tools
 ---
-  # PHASE IV – Database Creation and Configuration
+  ## PHASE IV – Database Creation and Configuration
 
 
-## Objective
+### Objective
 To create and configure an Oracle database environment suitable for managing mine waste data, including users, tablespaces, and storage configurations.
 
 ---
 
-## Important Note on Oracle Version
+### Important Note on Oracle Version
 This project was implemented using **Oracle Database 10g Express Edition**, which does **not support Pluggable Databases (PDBs)**.
 
 Therefore, Phase IV requirements were implemented using:
@@ -313,9 +314,9 @@ This approach provides equivalent isolation and configuration controls.
 
 ---
 
-## Database Configuration
+### Database Configuration
 
-### Tablespaces Created
+#### Tablespaces Created
 | Tablespace Name | Purpose |
 |-----------------|---------|
 | minewaste_data  | Data storage |
@@ -329,7 +330,7 @@ All tablespaces use:
 
 ---
 
-### Admin User
+#### Admin User
 - Username: `mon_27383_Anitha_minewaste`
 - Password: `Anitha`
 - Role: Super admin (project-level)
@@ -337,26 +338,26 @@ All tablespaces use:
 
 ---
 
-## Memory & Logging
+### Memory & Logging
 - Memory managed automatically by Oracle 10g XE
 - ARCHIVELOG mode enabled by default configuration for recovery support
 
 ---
 
-## Screenshots
-### user_creation
+### Screenshots
+#### user_creation
 <img width="431" height="471" alt="piv user1" src="https://github.com/user-attachments/assets/1c32d12e-a400-4f98-9db9-efd1d5bbe44f" />
 
-### verification
+#### verification
 <img width="377" height="131" alt="piv verf" src="https://github.com/user-attachments/assets/e7ffae2c-6899-4a2b-bcb8-e98502fe0475" />
 
-### tablespace
+#### tablespace
 <img width="347" height="481" alt="piv tab" src="https://github.com/user-attachments/assets/e95181ef-8a5a-40f1-a018-65d68aa56cf7" />
 
 
 ---
 
-## How to Run Scripts
+### How to Run Scripts
 Execute scripts in this order using SQL*Plus (SYSDBA):
 
 1. `01_tablespaces.sql`
