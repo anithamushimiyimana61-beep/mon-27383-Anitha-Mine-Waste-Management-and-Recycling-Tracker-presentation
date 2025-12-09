@@ -1,0 +1,106 @@
+CREATE PLUGGABLE DATABASE mon_27383_Anitha_minewaste_db
+ADMIN USER mon_admin IDENTIFIED BY Anitha
+FILE_NAME_CONVERT = ('pdbseed', 'mon_27383_minewaste');
+
+-- Step 3: Open the PDB
+ALTER PLUGGABLE DATABASE mon_27383_Anitha_minewaste_db OPEN;
+
+-- Step 4: Save state for automatic startup
+ALTER PLUGGABLE DATABASE mon_27383_Anitha_minewaste_db SAVE STATE;
+
+-- Step 5: Connect to the new PDB
+ALTER SESSION SET CONTAINER = mon_27383_Anitha_minewaste_db;
+
+-- ============================================================================
+-- TABLESPACE CONFIGURATION
+-- ============================================================================
+
+-- Create tablespace for data
+CREATE TABLESPACE minewaste_data
+DATAFILE 'minewaste_data01.dbf' SIZE 100M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO;
+
+-- Create tablespace for indexes
+CREATE TABLESPACE minewaste_index
+DATAFILE 'minewaste_index01.dbf' SIZE 50M
+AUTOEXTEND ON NEXT 5M MAXSIZE UNLIMITED
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO;
+
+-- Create temporary tablespace
+CREATE TEMPORARY TABLESPACE minewaste_temp
+TEMPFILE 'minewaste_temp01.dbf' SIZE 50M
+AUTOEXTEND ON NEXT 10M MAXSIZE UNLIMITED;
+
+-- ============================================================================
+-- USER CREATION & PRIVILEGES
+-- ============================================================================
+
+-- Create main application user
+CREATE USER mon_27383_anitha IDENTIFIED BY Anitha
+DEFAULT TABLESPACE minewaste_data
+TEMPORARY TABLESPACE minewaste_temp
+QUOTA UNLIMITED ON minewaste_data
+QUOTA UNLIMITED ON minewaste_index;
+
+-- Grant necessary privileges
+GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE SYNONYM TO mon_27383_anitha;
+GRANT CREATE SESSION TO mon_27383_anitha;
+GRANT CREATE TABLE TO mon_27383_anitha;
+GRANT CREATE PROCEDURE TO mon_27383_anitha;
+GRANT CREATE TRIGGER TO mon_27383_anitha;
+GRANT CREATE SEQUENCE TO mon_27383_anitha;
+GRANT SELECT ANY DICTIONARY TO mon_27383_anitha;
+
+-- ============================================================================
+-- MEMORY CONFIGURATION
+-- ============================================================================
+
+-- Configure SGA (System Global Area)
+ALTER SYSTEM SET sga_target = 512M SCOPE=SPFILE;
+ALTER SYSTEM SET sga_max_size = 1G SCOPE=SPFILE;
+
+-- Configure PGA (Program Global Area)
+ALTER SYSTEM SET pga_aggregate_target = 256M SCOPE=SPFILE;
+
+-- ============================================================================
+-- ARCHIVE LOG CONFIGURATION
+-- ============================================================================
+
+-- Enable archive log mode (requires restart)
+-- SHUTDOWN IMMEDIATE;
+-- STARTUP MOUNT;
+-- ALTER DATABASE ARCHIVELOG;
+-- ALTER DATABASE OPEN;
+
+-- Set archive destination
+ALTER SYSTEM SET log_archive_dest_1 = 'LOCATION=USE_DB_RECOVERY_FILE_DEST';
+
+-- ============================================================================
+-- VERIFICATION QUERIES
+-- ============================================================================
+
+-- Verify PDB creation
+SELECT name, open_mode FROM v$pdbs WHERE name = 'MON_27383_ANITHA_MINEWASTE_DB';
+
+-- Verify tablespaces
+SELECT tablespace_name, status, contents FROM dba_tablespaces 
+WHERE tablespace_name LIKE 'MINEWASTE%';
+
+-- Verify user creation
+SELECT username, default_tablespace, temporary_tablespace 
+FROM dba_users WHERE username = 'MON_27383_ANITHA';
+
+-- Check memory parameters
+SELECT name, value FROM v$parameter 
+WHERE name IN ('sga_target', 'sga_max_size', 'pga_aggregate_target');
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- 1. Run these scripts as SYSDBA
+-- 2. After PDB creation, connect as: sqlplus mon_27383_anitha/Anitha@mon_27383_Anitha_minewaste_db
+-- 3. Proceed to Phase V for table creation
+-- ============================================================================
