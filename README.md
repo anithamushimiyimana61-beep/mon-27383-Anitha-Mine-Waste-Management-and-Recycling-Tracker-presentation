@@ -219,6 +219,7 @@ This ensures minimal redundancy and data integrity.
 The Business Intelligence component of the Mine Waste Management and Recycling Tracker
 aims to support management decision-making by providing analytical insights on waste
 generation, recycling efficiency, environmental compliance, and user activity.
+![mining](https://github.com/user-attachments/assets/017e6306-4398-49fb-b8c0-0fb53275b0c1)
 
 ---
 
@@ -380,6 +381,8 @@ Build physical database structure with realistic test data, enforce constraints,
   - `05_insert_data.sql` – Data insertion (50+ rows per table)
   - `06_validation_queries.sql` – Verification queries and tests
 - **Screenshots**:
+  <img width="496" height="392" alt="p v insert 2" src="https://github.com/user-attachments/assets/91da02b5-19ea-4060-9095-30ea4618a11d" />
+
  ### tables 
  <img width="347" height="375" alt="P V TAB" src="https://github.com/user-attachments/assets/c8a4e5c9-1985-4360-9cc1-c950087331fc" />
 
@@ -389,6 +392,7 @@ Build physical database structure with realistic test data, enforce constraints,
 ### insert
 <img width="482" height="371" alt="p v insert 1" src="https://github.com/user-attachments/assets/103f148d-8736-4c44-aad5-29bbc3ff1325" />
 
+<img width="396" height="431" alt="P V SEQ" src="https://github.com/user-attachments/assets/53c625d2-bf0f-48df-bb29-5de66a35c908" />
 
   ## Phase VI – Database Interaction & Transactions
 
