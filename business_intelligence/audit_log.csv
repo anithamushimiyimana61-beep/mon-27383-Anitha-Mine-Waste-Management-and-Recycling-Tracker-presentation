@@ -1,0 +1,17 @@
+| USERNAME   | ACTION_TYPE | TARGET_TABLE   | SUCCESS_FLAG | ACTION_TIME           |
+| ---------- | ----------- | -------------- | ------------ | --------------------- |
+| MINE_ADMIN | INSERT      | WASTE          | N            | 09-DEC-25 11:27:39 AM |
+| MINE_ADMIN | INSERT      | WASTE          | N            | 09-DEC-25 10:26:49 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 09-DEC-25 10:23:18 AM |
+| MINE_ADMIN | BATCH_DML   | RECYCLING      | N            | 08-DEC-25 12:41:36 PM |
+| MINE_ADMIN | INSERT      | WASTE          | N            | 08-DEC-25 10:08:01 AM |
+| MINE_ADMIN | UPDATE      | RECYCLING      | Y            | 07-DEC-25 08:43:15 AM |
+| MINE_ADMIN | BATCH_DML   | RECYCLING      | Y            | 07-DEC-25 08:43:15 AM |
+| MINE_ADMIN | UPDATE      | WASTE          | Y            | 07-DEC-25 08:42:26 AM |
+| MINE_ADMIN | UPDATE      | WASTE          | Y            | 07-DEC-25 08:41:24 AM |
+| MINE_ADMIN | INSERT      | WASTE_DISPOSAL | Y            | 07-DEC-25 08:40:56 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 05-DEC-25 02:57:08 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 05-DEC-25 02:33:12 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 05-DEC-25 02:12:55 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 05-DEC-25 01:24:32 AM |
+| MINE_ADMIN | BATCH_DML   | WASTE          | N            | 05-DEC-25 01:21:19 AM |
