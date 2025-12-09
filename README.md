@@ -430,6 +430,8 @@ Employees **cannot insert/update/delete** on weekdays (Mon-Fri) or public holida
 ---
 
 ## Business Intelligence (BI) Considerations
+![mining](https://github.com/user-attachments/assets/b3ea2067-7e83-4a58-aefd-e302dffb5032)
+
 - **Fact Table:** `WASTE`  
 - **Dimension Tables:** `MINE_SITE`, `MINE_SITE_MANAGER`, `  RECYCLING `, `MINE_WASTE `, `RECYCLING_SUPERVISOR`, `ENVIRONMENTAL_OFFICER`  
 - **KPIs:**  
