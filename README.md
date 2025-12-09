@@ -27,7 +27,7 @@ Mining operations generate significant waste, but many mines lack a system to tr
 ---
 
 ## PHASE II
-###Diagram BPMN
+### Diagram BPMN
 ![alt text](<Screenshot 2025-12-01 141521-1.png>)
 ### Stone Mine Waste Management and Recycling Tracker System
 
@@ -382,8 +382,10 @@ Build physical database structure with realistic test data, enforce constraints,
 - **Screenshots**:
  ### tables 
  <img width="347" height="375" alt="P V TAB" src="https://github.com/user-attachments/assets/c8a4e5c9-1985-4360-9cc1-c950087331fc" />
+
 ### validation
 <img width="347" height="375" alt="P V TAB" src="https://github.com/user-attachments/assets/8229f109-babe-46ad-97ba-9dc8c4a95973" />
+
 ### insert
 <img width="482" height="371" alt="p v insert 1" src="https://github.com/user-attachments/assets/103f148d-8736-4c44-aad5-29bbc3ff1325" />
 
